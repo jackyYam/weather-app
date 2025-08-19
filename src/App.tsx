@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import Header from "./components/Header";
+import CityTabs from "./components/CityTabs";
+import CurrentWeather from "./components/CurrentWeather";
+import HourlyForecast from "./components/HourlyForecast";
+import DailyForecast from "./components/DailyForecast";
+import "./index.css";
+import type { City } from "./types/city";
+
+const cities = [
+  {
+    name: "RIO DE JANEIRO",
+    lat: -22.9068,
+    lon: -43.1729,
+  },
+  {
+    name: "BEIJING",
+    lat: 39.9042,
+    lon: 116.4074,
+  },
+
+  {
+    name: "LOS ANGELES",
+    lat: 34.0522,
+    lon: -118.2437,
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activeCity, setActiveCity] = useState<City>(cities[0]);
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date>(new Date());
+  const queryClient = useQueryClient();
+
+  const refreshAllQueries = () => {
+    // Invalidate all weather-related queries for all cities
+    queryClient.invalidateQueries({ queryKey: ["weather"] });
+    queryClient.invalidateQueries({ queryKey: ["hourly-forecast"] });
+    queryClient.invalidateQueries({ queryKey: ["daily-forecast"] });
+    setLastRefreshTime(new Date());
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-background">
+      <Header onRefresh={refreshAllQueries} />
+      <div className="max-w-5xl mx-auto px-4 pb-6 mt-3">
+        <CityTabs
+          cities={cities}
+          activeCity={activeCity}
+          onCityChange={setActiveCity}
+        />
+        <div className="space-y-4 w-full">
+          <CurrentWeather city={activeCity} lastRefreshTime={lastRefreshTime} />
+          <HourlyForecast city={activeCity} />
+          <DailyForecast city={activeCity} />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
