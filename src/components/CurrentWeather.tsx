@@ -63,7 +63,12 @@ export default function CurrentWeather({
       <div className="text-center md:text-left">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-card-foreground mb-1">
-            {city.name}
+            {city.name}{" "}
+            {city.id === "current-location" && weatherData?.cityName && (
+              <span className="text-sm text-muted-foreground">
+                ({weatherData.cityName})
+              </span>
+            )}
           </h2>
           <p className="text-sm text-muted-foreground mb-2">
             Last updated: {formatRefreshTime(lastRefreshTime)}

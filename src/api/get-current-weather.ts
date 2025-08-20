@@ -64,6 +64,7 @@ function transformCurrentWeatherData(
     max: Math.round(data.main.temp_max),
     min: Math.round(data.main.temp_min),
     clouds: data.clouds.all,
+    cityName: data.name,
   };
 }
 

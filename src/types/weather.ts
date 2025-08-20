@@ -152,6 +152,7 @@ export interface AppCurrentWeather {
   feelsLike: number;
   max: number;
   min: number;
+  cityName?: string;
 }
 
 export interface AppHourlyForecast {

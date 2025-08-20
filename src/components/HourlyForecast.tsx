@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getHourlyForecast } from "../api/get-forecast";
 import type { City } from "../types/city";
 import { Droplet, Wind } from "lucide-react";
+import { useRef, useEffect } from "react";
 interface HourlyForecastProps {
   city: City;
 }
@@ -12,13 +13,52 @@ export default function HourlyForecast({ city }: HourlyForecastProps) {
     queryFn: () => getHourlyForecast({ lat: city.lat, lon: city.lon }),
   });
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadingContainerRef = useRef<HTMLDivElement>(null);
+
+  // Use native event listener for better control over wheel events
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      // Always prevent vertical scroll
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Convert vertical scroll to horizontal scroll if there's a container
+      const container =
+        scrollContainerRef.current || loadingContainerRef.current;
+      if (container) {
+        const scrollAmount = e.deltaY;
+        container.scrollLeft += scrollAmount;
+      }
+    };
+
+    const mainContainer = scrollContainerRef.current;
+    const loadingContainer = loadingContainerRef.current;
+
+    // Add event listener to whichever container exists
+    const activeContainer = mainContainer || loadingContainer;
+    if (activeContainer) {
+      // Add passive: false to ensure preventDefault works
+      activeContainer.addEventListener("wheel", handleWheel, {
+        passive: false,
+      });
+
+      return () => {
+        activeContainer.removeEventListener("wheel", handleWheel);
+      };
+    }
+  }, [isFetching]); // Re-run when loading state changes
+
   if (isFetching) {
     return (
       <div className="bg-card rounded-lg p-4 shadow-sm pb-1">
         <h3 className="text-lg font-semibold text-card-foreground mb-4">
           Next hours
         </h3>
-        <div className="flex gap-4 overflow-x-auto pb-3">
+        <div
+          ref={loadingContainerRef}
+          className="flex gap-4 overflow-x-auto pb-3 scrollbar-thin"
+        >
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="flex items-center">
               <div className="text-center min-w-32 max-w-32">
@@ -53,7 +93,10 @@ export default function HourlyForecast({ city }: HourlyForecastProps) {
       <h3 className="text-lg font-semibold text-card-foreground mb-4">
         Next hours
       </h3>
-      <div className="flex gap-4 overflow-x-auto pb-3">
+      <div
+        ref={scrollContainerRef}
+        className="flex gap-4 overflow-x-auto pb-3 scrollbar-thin"
+      >
         {weatherData?.map((hour, index) => (
           <div key={index} className="flex items-center">
             <div className="text-center min-w-32 max-w-32">

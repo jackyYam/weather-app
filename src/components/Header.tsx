@@ -1,11 +1,12 @@
 import { useTheme } from "../contexts/ThemeContext";
-import { Sun, Moon, RefreshCcw } from "lucide-react";
+import { Sun, Moon, RefreshCcw, Search } from "lucide-react";
 
 interface HeaderProps {
   onRefresh: () => void;
+  onSearchClick: () => void;
 }
 
-export default function Header({ onRefresh }: HeaderProps) {
+export default function Header({ onRefresh, onSearchClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -17,14 +18,14 @@ export default function Header({ onRefresh }: HeaderProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={onRefresh}
-            className="p-2 sm:p-3 hover:bg-primary/80 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2 sm:p-3 hover:bg-primary-foreground/10 dark:hover:bg-primary-foreground rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
             aria-label="Refresh weather data"
           >
             <RefreshCcw className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={toggleTheme}
-            className="p-2 sm:p-3 hover:bg-primary/80 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2 sm:p-3 hover:bg-primary-foreground/10 dark:hover:bg-primary-foreground rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
             aria-label={`Switch to ${
               theme === "light" ? "dark" : "light"
             } mode`}
@@ -35,20 +36,12 @@ export default function Header({ onRefresh }: HeaderProps) {
               <Sun className="w-5 h-5 sm:w-6 sm:h-6" />
             )}
           </button>
-          <button className="p-2 sm:p-3 hover:bg-primary/80 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-            <svg
-              className="w-5 h-5 sm:w-6 sm:h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+          <button
+            onClick={onSearchClick}
+            className="p-2 sm:p-3 hover:bg-primary-foreground/10 dark:hover:bg-primary-foreground rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer  "
+            aria-label="Search cities"
+          >
+            <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
       </div>
