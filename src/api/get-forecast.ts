@@ -151,22 +151,22 @@ function transformDailyForecastData(items: ForecastItem[]): AppDailyForecast[] {
 
     // Calculate high/low temperatures for the day
     const temps = group.forecasts.map((f) => f.main.temp);
-    const icons = group.forecasts.map((f) => f.weather[0]?.icon || "01d");
     const high = Math.round(Math.max(...temps));
     const low = Math.round(Math.min(...temps));
 
     // Get the most common weather condition for the day
-    const conditions = group.forecasts.map(
-      (f) => f.weather[0]?.description || ""
-    );
+    const conditions = group.forecasts.map((f) => f.weather[0]?.main || "");
     const condition = getMostFrequent(conditions);
+    const icon = getMostFrequent(
+      group.forecasts.map((f) => f.weather[0]?.icon)
+    );
 
     return {
       day,
       condition: condition || "Unknown",
       high,
       low,
-      icon: icons[0] || "01d",
+      icon: icon || "01d",
     };
   });
 }
@@ -188,8 +188,6 @@ function groupForecastsByDate(items: ForecastItem[]): Array<{
     }
     groups.get(date)!.push(item);
   });
-
-  console.log(groups);
 
   return Array.from(groups.entries())
     .map(([date, forecasts]) => ({ date, forecasts }))
