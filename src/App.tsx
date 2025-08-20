@@ -37,7 +37,7 @@ const defaultCities: City[] = [
 function App() {
   const { cities, addCity, removeCity } = useCityStorage(defaultCities);
   const [activeCity, setActiveCity] = useState<City>(defaultCities[0]);
-  const [lastRefreshTime, setLastRefreshTime] = useState<Date>(new Date());
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -45,8 +45,6 @@ function App() {
     // Invalidate all weather-related queries for all cities
     queryClient.refetchQueries({ queryKey: ["weather"] });
     queryClient.refetchQueries({ queryKey: ["hourly-forecast"] });
-    queryClient.refetchQueries({ queryKey: ["daily-forecast"] });
-    setLastRefreshTime(new Date());
   };
 
   const handleCitySelect = (selectedCity: City) => {
@@ -84,7 +82,7 @@ function App() {
           onCityRemove={handleCityRemove}
         />
         <div className="space-y-4 w-full">
-          <CurrentWeather city={activeCity} lastRefreshTime={lastRefreshTime} />
+          <CurrentWeather city={activeCity} />
           <HourlyForecast city={activeCity} />
           <DailyForecast city={activeCity} />
         </div>

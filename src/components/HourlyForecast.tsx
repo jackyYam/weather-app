@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getHourlyForecast } from "../api/get-forecast";
+import { formatHourlyTime } from "../lib/timezone";
 import type { City } from "../types/city";
 import { Droplet, Wind } from "lucide-react";
 import { useRef, useEffect } from "react";
@@ -118,7 +119,9 @@ export default function HourlyForecast({ city }: HourlyForecastProps) {
                 </div>
               </div>
 
-              <div className="text-xs text-muted-foreground">{hour.time}</div>
+              <div className="text-xs text-muted-foreground">
+                {formatHourlyTime(parseInt(hour.time), hour.timezone)}
+              </div>
             </div>
             {index < weatherData.length - 1 && (
               <div className="w-px h-20 bg-border/50 mx-2 flex-shrink-0"></div>

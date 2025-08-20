@@ -58,7 +58,7 @@ export async function getHourlyForecast(
   // Get next 8 forecast items (24 hours in 3-hour intervals)
   const hourlyItems = forecastData.list.slice(0, 8);
 
-  return transformHourlyForecastData(hourlyItems);
+  return transformHourlyForecastData(hourlyItems, forecastData.city.timezone);
 }
 
 /**
@@ -112,15 +112,12 @@ export async function getForecastByCity(
  * Transforms forecast items to hourly format for the app
  */
 function transformHourlyForecastData(
-  items: ForecastItem[]
+  items: ForecastItem[],
+  timezone: number
 ): AppHourlyForecast[] {
   return items.map((item) => {
-    const date = new Date(item.dt * 1000);
-    const time = date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+    // Use timestamp directly for timezone-aware formatting in components
+    const time = item.dt.toString(); // Store as timestamp string
 
     return {
       time,
@@ -129,6 +126,7 @@ function transformHourlyForecastData(
       windSpeed: item.wind.speed,
       clouds: item.clouds.all,
       icon: item.weather[0]?.icon || "01d",
+      timezone,
     };
   });
 }
@@ -191,8 +189,9 @@ function groupForecastsByDate(items: ForecastItem[]): Array<{
     groups.get(date)!.push(item);
   });
 
+  console.log(groups);
+
   return Array.from(groups.entries())
-    .filter(([date]) => date !== new Date().toISOString().split("T")[0])
     .map(([date, forecasts]) => ({ date, forecasts }))
     .slice(0, 5); // Limit to 5 days
 }

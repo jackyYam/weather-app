@@ -65,6 +65,7 @@ function transformCurrentWeatherData(
     min: Math.round(data.main.temp_min),
     clouds: data.clouds.all,
     cityName: data.name,
+    timezone: data.timezone,
   };
 }
 

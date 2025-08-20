@@ -153,6 +153,7 @@ export interface AppCurrentWeather {
   max: number;
   min: number;
   cityName?: string;
+  timezone: number; // Offset from UTC in seconds
 }
 
 export interface AppHourlyForecast {
@@ -162,6 +163,7 @@ export interface AppHourlyForecast {
   windSpeed: number;
   clouds: number;
   icon: string;
+  timezone: number; // Offset from UTC in seconds
 }
 
 export interface AppDailyForecast {

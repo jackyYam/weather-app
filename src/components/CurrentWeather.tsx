@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentWeather } from "../api/get-current-weather";
+import { formatCurrentLocalTime } from "../lib/timezone";
 import type { City } from "../types/city";
 import {
   Droplet,
@@ -11,7 +12,6 @@ import {
 
 interface CurrentWeatherProps {
   city: City;
-  lastRefreshTime: Date;
 }
 
 interface WeatherStatProps {
@@ -41,22 +41,11 @@ function WeatherStat({
   );
 }
 
-export default function CurrentWeather({
-  city,
-  lastRefreshTime,
-}: CurrentWeatherProps) {
+export default function CurrentWeather({ city }: CurrentWeatherProps) {
   const { data: weatherData, isFetching } = useQuery({
     queryKey: ["weather", city],
     queryFn: () => getCurrentWeather({ lat: city.lat, lon: city.lon }),
   });
-
-  const formatRefreshTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour12: true,
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div className="bg-card rounded-lg p-6 shadow-sm">
@@ -70,9 +59,13 @@ export default function CurrentWeather({
               </span>
             )}
           </h2>
-          <p className="text-sm text-muted-foreground mb-2">
-            Last updated: {formatRefreshTime(lastRefreshTime)}
-          </p>
+          <div className="text-sm text-muted-foreground mb-2">
+            {weatherData?.timezone && (
+              <div>
+                Local time: {formatCurrentLocalTime(weatherData.timezone)}
+              </div>
+            )}
+          </div>
         </div>
         {isFetching ? (
           <div className="animate-pulse">
