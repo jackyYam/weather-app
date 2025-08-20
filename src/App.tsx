@@ -45,6 +45,7 @@ function App() {
     // Invalidate all weather-related queries for all cities
     queryClient.refetchQueries({ queryKey: ["weather"] });
     queryClient.refetchQueries({ queryKey: ["hourly-forecast"] });
+    queryClient.refetchQueries({ queryKey: ["daily-forecast"] });
   };
 
   const handleCitySelect = (selectedCity: City) => {
